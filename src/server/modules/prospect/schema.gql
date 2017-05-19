@@ -1,0 +1,65 @@
+#Prospect Type
+type Prospect {
+  prospectid: ID
+  created: Date
+  interaction: JSON
+  quote: JSON
+  registrationid: ID
+  checkoutid: ID
+  converted: Boolean
+}
+
+#Prospect Input Type
+input ProspectInput{
+  interaction: JSON!
+  quote: JSON!
+ }
+
+#Prospect Payment Type
+input ProspectPayment{
+  prospectid: ID!
+  registrationid: ID!
+  checkoutid: ID!
+}
+
+#Edges for ProspectsQuery
+type ProspectEdges {
+  node: Prospect
+  cursor: Date
+}
+
+# Prospects relay-style pagination query
+type ProspectsQuery {
+  totalCount: Int
+  edges: [ProspectEdges]
+  prospectInfo: Prospect
+}
+
+extend type Query {
+  #Prospects pagination query
+  prospectsQuery(limit: Int, after: Date): ProspectsQuery
+  #Prospect Query
+  prospect(id: ID!): Prospect
+  
+}
+
+extend type Mutation {
+  #Create a new prospect
+  addProspect(input: ProspectInput!): Prospect
+  #Update prospect payment
+  updateProspectPayment(input: ProspectPayment!): Prospect
+}
+
+extend type Subscription {
+  #Subscription for editing a Prospect
+  prospectUpdated(prospectid: ID!): Prospect
+  #Subscription for Prospect list
+  prospectsUpdated(endCursor: Date!) : UpdateProspectsPayload
+}
+
+# Payload for prospectsUpdated Subscription
+type UpdateProspectsPayload {
+  mutation: String!
+  prospectid: ID!
+  node: Prospect
+}

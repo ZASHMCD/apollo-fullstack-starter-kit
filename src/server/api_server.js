@@ -28,28 +28,28 @@ app.use(bodyParser.json());
 app.use('/', express.static(settings.frontendBuildDir, { maxAge: '180 days' }));
 
 if (settings.persistGraphQL && process.env.NODE_ENV !== 'test') {
-  const invertedMap = invert(queryMap);
+    const invertedMap = invert(queryMap);
 
-  app.use(
-    '/graphql',
-    (req, resp, next) => {
-      if (isArray(req.body)) {
-        req.body = req.body.map(body => {
-          return {
-            query: invertedMap[body.id],
-            ...body
-          };
-        });
-        next();
-      } else {
-        if (!__DEV__ || (req.get('Referer') || '').indexOf('/graphiql') < 0) {
-          resp.status(500).send("Unknown GraphQL query has been received, rejecting...");
-        } else {
-          next();
-        }
-      }
-    },
-  );
+    app.use(
+        '/graphql',
+        (req, resp, next) => {
+            if (isArray(req.body)) {
+                req.body = req.body.map(body => {
+                    return {
+                        query: invertedMap[body.id],
+                        ...body
+                    };
+                });
+                next();
+            } else {
+                if (!__DEV__ || (req.get('Referer') || '').indexOf('/graphiql') < 0) {
+                    resp.status(500).send("Unknown GraphQL query has been received, rejecting...");
+                } else {
+                    next();
+                }
+            }
+        },
+    );
 }
 
 app.use('/graphql', (...args) => graphqlMiddleware(...args));
@@ -61,33 +61,33 @@ server = http.createServer(app);
 addGraphQLSubscriptions(server);
 
 server.listen(port, () => {
-  log.info(`API is now running on port ${port}`);
+    log.info(`API is now running on port ${port}`);
 });
 
 server.on('close', () => {
-  server = undefined;
+    server = undefined;
 });
 
 if (module.hot) {
-  module.hot.dispose(() => {
-    try {
-      if (server) {
-        server.close();
-      }
-    } catch (error) {
-      log(error.stack);
-    }
-  });
+    module.hot.dispose(() => {
+        try {
+            if (server) {
+                server.close();
+            }
+        } catch (error) {
+            log(error.stack);
+        }
+    });
 
-  module.hot.accept(['./api/subscriptions'], () => {
-    try {
-      addGraphQLSubscriptions(server);
-    } catch (error) {
-      log(error.stack);
-    }
-  });
+    module.hot.accept(['./api/subscriptions'], () => {
+        try {
+            addGraphQLSubscriptions(server);
+        } catch (error) {
+            log(error.stack);
+        }
+    });
 
-  module.hot.accept();
+    module.hot.accept();
 }
 
 export default server;

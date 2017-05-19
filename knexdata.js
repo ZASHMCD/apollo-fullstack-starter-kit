@@ -1,41 +1,46 @@
-export const development = {
-  client: 'sqlite3',
-  connection: {
-    filename: './dev-db.sqlite3'
-  },
-  seeds: {
-    directory: './src/server/database/seeds'
-  },
-  migrations: {
-    directory: './src/server/database/migrations'
-  },
-  useNullAsDefault: true
-};
+require('dotenv').config({ silent: true });
 
-export const production = {
-  client: 'sqlite3',
-  connection: {
-    filename: './prod-db.sqlite3'
-  },
-  seeds: {
-    directory: './src/server/database/seeds'
-  },
-  migrations: {
-    directory: './src/server/database/migrations'
-  },
-  useNullAsDefault: true
-};
+module.exports = {
 
-export const test = {
-  client: 'sqlite3',
-  connection: {
-    filename: ':memory:'
-  },
-  seeds: {
-    directory: './src/server/database/seeds'
-  },
-  migrations: {
-    directory: './src/server/database/migrations'
-  },
-  useNullAsDefault: true
+    development: {
+        client: 'pg',
+        connection: process.env.DATABASE_URL,
+        pool: {
+            min: 2,
+            max: 10
+        },
+        migrations: {
+            directory: __dirname + '/src/server/database/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/src/server/database/seeds'
+        }
+    },
+
+    test: {
+        client: 'pg',
+        connection: process.env.DATABASE_URL,
+        pool: {
+            min: 2,
+            max: 10
+        },
+        migrations: {
+            directory: __dirname + '/src/server/database/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/src/server/database/seeds'
+        }
+    },
+
+    aws: {
+        client: 'pg',
+        connection: process.env.DATABASE_URL,
+        migrations: {
+            directory: __dirname + '/src/server/database/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/src/server/database/seeds'
+        }
+    }
+
 };

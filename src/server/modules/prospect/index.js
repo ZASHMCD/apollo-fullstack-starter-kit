@@ -1,6 +1,6 @@
-import DataLoader from 'dataloader';
+// import DataLoader from 'dataloader';
 
-import Post from './sql';
+import Prospect from './sql';
 import schema from './schema.gql';
 import createResolvers from './resolvers';
 import subscriptionsSetup from './subscriptions_setup';
@@ -12,13 +12,15 @@ export default new Feature({
     createResolversFunc: createResolvers,
     subscriptionsSetup,
     createContextFunc: () => {
-        const post = new Post();
+        const prospect = new Prospect();
 
         return {
-            Post: post,
+            Prospect: prospect,
+            /*
             loaders: {
                 getCommentsForPostIds: new DataLoader(post.getCommentsForPostIds),
             }
+            */
         };
-    }
+    },
 });
